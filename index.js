@@ -12,15 +12,14 @@ var rollbar = new Rollbar({
 let students = [];
 
 const app = express();
-
-app.use(rollbar.errorHandler());
+app.use(express.json());
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/index.html'));
   rollbar.info('HTML file served successfully');
 });
 
-app.get('/api/student', (req, res) => {
+app.post('/api/student', (req, res) => {
   let {name} = req.body;
   name = name.trim();
 
@@ -28,9 +27,10 @@ app.get('/api/student', (req, res) => {
 
   rollbar.log('Student added successfully', {author: 'Freeman', type: 'manual'});
 
-  res.status(200).send(students)
+  res.status(200).send(students);
 });
 
+app.use(rollbar.errorHandler());
 const port = process.env.PORT || 4545;
 
 app.listen(port, () => console.log(port + ' years ago in ancient Egypt...'));
